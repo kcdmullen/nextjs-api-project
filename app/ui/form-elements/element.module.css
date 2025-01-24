@@ -1,0 +1,8 @@
+.customFormElement {
+  height: 30px;
+  width: 100%;
+  padding: 4px;
+}
+.elementWrapper {
+  margin: 1rem 0;
+}
