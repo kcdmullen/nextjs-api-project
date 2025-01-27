@@ -60,8 +60,9 @@ export async function searchPOs(params: FormData) {
       throw new Error(`Response status: ${response.status}`);
     }
     const json = await response.json();
-    console.log(json);
+    return json;
   } catch (error) {
     console.error(error);
+    return error;
   }
 }

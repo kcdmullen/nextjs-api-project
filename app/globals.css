@@ -39,8 +39,12 @@ h1 {
   color: orange;
 }
 
-@media (prefers-color-scheme: dark) {
+/* .btn {
+  padding: 6px;
+} */
+
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
+} */

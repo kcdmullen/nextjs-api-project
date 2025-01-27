@@ -1,14 +1,43 @@
 import Form from 'next/form';
 
 import styles from './dash.module.css';
-import Select from '../ui/form-elements/select';
-import Input from '../ui/form-elements/input';
+import { Input, Select, Button } from '../ui/formElements';
 import { getCategories, searchPOs } from '../lib/apiService';
+
+let queryResults: object[];
 
 async function searchPO(params: FormData) {
   'use server';
-  searchPOs(params);
+  if (params.get('department') === 'ALL DEPARTMENTS') {
+    params.set('department', '');
+  }
+  if (params.get('vendor') === 'ALL VENDORS') {
+    params.set('vendor', '');
+  }
+  try {
+    queryResults = await searchPOs(params);
+    console.log(queryResults);
+  } catch (error) {
+    console.error(error);
+  }
 }
+
+function generateYearRanges(start: string, currentDate = new Date()) {
+  const result = [''];
+  const startYear = Number(start.split('-')[0]);
+
+  const currentYear = currentDate.getFullYear();
+  const isAfterJuly = currentDate.getMonth() >= 6; // July is month 6 (zero-based)
+  const endYear = isAfterJuly ? currentYear + 1 : currentYear;
+
+  for (let year = startYear; year < endYear; year++) {
+    result.push(`${year}-${year + 1}`);
+  }
+  return result;
+}
+
+const start = '2010-2011';
+const yearRanges = generateYearRanges(start);
 
 export default async function Page() {
   type ArraysMap = {
@@ -16,8 +45,8 @@ export default async function Page() {
   };
 
   const lists: ArraysMap = {
-    departments: [],
-    vendors: [],
+    departments: ['ALL DEPARTMENTS'],
+    vendors: ['ALL VENDORS'],
   };
 
   const type = 'departments';
@@ -38,23 +67,64 @@ export default async function Page() {
   return (
     <>
       <main className={styles.main}>
-        <h1>Dashboard</h1>
-        <Form action={searchPO}>
-          <Select
-            id='department'
-            label='Department'
-            options={lists.departments}
-          />
-          <Select id='vendor' label='Choose a Vendor' options={lists.vendors} />
-          <Select
-            id='fiscal_year'
-            label='Fiscal Year'
-            options={['2024-2025', '2023-2024', '2022-2023']}
-          />
-          <Input id='pricefrom' label='Price From' type='number' />
-          <Input id='priceto' label='Price To' type='number' />
-          <button>Search</button>
-        </Form>
+        <div className='container'>
+          <h1>Purchase Orders</h1>
+
+          <Form action={searchPO}>
+            <div className='row'>
+              <div className='col'>
+                <Select
+                  id='fiscal_year'
+                  label='Fiscal Year'
+                  options={yearRanges}
+                />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col'>
+                <Input id='datefrom' label='Date From' type='date' />
+              </div>
+              <div className='col'>
+                <Input id='dateto' label='Date To' type='date' />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col'>
+                <Select
+                  id='department'
+                  label='Department'
+                  options={lists.departments}
+                />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col'>
+                <Input id='pricefrom' label='Price From' type='number' />
+              </div>
+              <div className='col'>
+                <Input id='priceto' label='Price To' type='number' />
+              </div>
+            </div>
+            <div className='row'>
+              <div className='col'>
+                <Select
+                  id='vendor'
+                  label='Choose a Vendor'
+                  options={lists.vendors}
+                />
+              </div>
+            </div>
+            <div className='row mt-3'>
+              <div className='col'>
+                <Button
+                  label='Search'
+                  type='submit'
+                  buttonClass='btn-success'
+                />
+              </div>
+            </div>
+          </Form>
+        </div>
       </main>
     </>
   );
