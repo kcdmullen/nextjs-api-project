@@ -1,4 +1,5 @@
 import Form from 'next/form';
+import { redirect } from 'next/navigation';
 
 import styles from './dash.module.css';
 import { Input, Select, Button } from '../ui/formElements';
@@ -14,12 +15,16 @@ async function searchPO(params: FormData) {
   if (params.get('vendor') === 'ALL VENDORS') {
     params.set('vendor', '');
   }
-  try {
-    queryResults = await searchPOs(params);
-    console.log(queryResults);
-  } catch (error) {
+
+  queryResults = await searchPOs(params).catch((error) => {
     console.error(error);
-  }
+  });
+  HandleResults(queryResults);
+}
+
+function HandleResults(results: object[]) {
+  console.log(results);
+  redirect('/results');
 }
 
 function generateYearRanges(start: string, currentDate = new Date()) {

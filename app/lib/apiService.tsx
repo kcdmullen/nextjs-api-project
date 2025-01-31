@@ -1,3 +1,4 @@
+'use client';
 const baseUrl = process.env.API_URL || '';
 const apiKey = process.env.API_KEY || '';
 
@@ -64,5 +65,25 @@ export async function searchPOs(params: FormData) {
   } catch (error) {
     console.error(error);
     return error;
+  }
+}
+
+export async function getAll(query: string) {
+  const url = `${baseUrl}/${query}`;
+  try {
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
   }
 }

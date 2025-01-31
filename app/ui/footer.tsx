@@ -11,14 +11,14 @@ const links = [
     type: 'internal',
   },
   {
-    name: 'Dashboard',
+    name: 'Purchase Orders',
     href: '/dashboard',
     src: '/globe.svg',
     alt: 'Globe icon',
     type: 'internal',
   },
   {
-    name: 'About',
+    name: 'Election Notices',
     href: '/dashboard/about',
     src: '/file.svg',
     alt: 'File icon',
